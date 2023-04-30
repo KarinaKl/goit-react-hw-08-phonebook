@@ -1,38 +1,47 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Navigation from './Navigation/Navigation';
+import styled from './App.module.css';
+import { Provider} from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from 'redux/store';
+import AuthLayout from './AuthLayout/AuthLayout';
+import { PrivateRoute } from './PrivateRoute/PrivateRoute';
+import { PublicRoute } from './PublicRoute/PublicRoute';
 
-import Register from 'pages/Register';
-import Login from 'pages/Login';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getUser } from 'redux/user/userOperations';
 
-import PrivateRoute from './PrivateRoute/PrivateRoute';
-import PublicRoute from './PublicRoute/PublicRoute';
-import Contacts from '../pages/Contacts/Contacts';
+// basename='/goit-react-hw-08-phonebook'
 
-export const App = () => {
-  const dispatch = useDispatch();
-  const userToken = useSelector(state => state.auth.token);
-  const { name, email } = useSelector(state => state.user);
+const HomePage = lazy(() => import("pages/HomePage"));
+const RegisterPage = lazy(() => import("../pages/RegisterPage/RegisterPage"));
+const LoginPage = lazy(() => import("pages/LoginPage/LoginPage"));
+const ContactsPage = lazy(() => import("../pages/ContactsPage/ContactsPage"));
 
-  useEffect(() => {
-    if (userToken && !name && !email) {
-      dispatch(getUser());
-    }
-  }, [userToken, name, email, dispatch]);
-  <Navigate to="/login" />;
+export default function App() {
+
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<PublicRoute />}>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-        </Route>
-        <Route path="/" element={<PrivateRoute />}>
-          <Route path="/contacts" element={<Contacts />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <AuthLayout>
+          <BrowserRouter basename='/goit-react-hw-08-phonebook'>
+            <div className={styled.container}>
+              <Navigation />
+              <Suspense>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route element={<PublicRoute/>}>
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                  </Route>
+                  <Route element={<PrivateRoute/>}>
+                    <Route path="/contacts" element={<ContactsPage />} />
+                  </Route>
+                </Routes>
+              </Suspense>
+            </div>
+          </BrowserRouter>
+        </AuthLayout>
+      </PersistGate>
+    </Provider>
   );
-};
+}

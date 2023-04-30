@@ -1,23 +1,32 @@
+
+import TextField from '@mui/material/TextField';
+
 import { useDispatch } from 'react-redux';
-import { TextField } from '@mui/material';
+import { setFilter } from 'redux/filter/filter-slice';
 
-import { changeFilter } from 'redux/filter/filterSlice';
 
-export const Filter = () => {
-  const dispatch = useDispatch();
+const Filter = () => {
+    const onSetFilter = payload => {
+        dispatch(setFilter(payload));
+      };
+    
+      const updateFilter = event => {
+        onSetFilter(event.target.value);
+      };
+    
+      const dispatch = useDispatch();
+    
 
-  const handleOnChange = event => {
-    dispatch(changeFilter(event.target.value));
-  };
 
-  return (
-    <TextField
-      id="standard-basic"
-      label="Enter contact name"
-      variant="standard"
-      required
-      onChange={handleOnChange}
-      name="filter"
-    />
-  );
-};
+     return (
+      <TextField
+              margin="normal"
+              id="outlined-search" 
+              label="Search field" 
+              type="search"
+              onChange={updateFilter}
+            />
+     )
+}
+
+export default Filter

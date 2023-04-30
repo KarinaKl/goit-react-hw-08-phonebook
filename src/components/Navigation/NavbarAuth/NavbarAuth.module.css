@@ -1,0 +1,46 @@
+.boxLink{
+    display: flex;
+    gap: 20px;
+    text-decoration: none;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    
+}
+
+.link{
+    text-decoration: none;
+}
+
+.header {
+    background-color: #6A5ACD;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+  }
+  
+  .header-logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .header-nav {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .headerLink{
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  .headerLink:hover{
+    color: #000000;
+  }

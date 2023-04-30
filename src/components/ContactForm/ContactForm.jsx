@@ -1,66 +1,82 @@
-import { useState, memo } from 'react';
+import { useState } from 'react';
+import styled from './ContactForm.module.css';
+import { fetchAddContacts } from 'redux/contacts/contacts-operation';
 import { useDispatch, useSelector } from 'react-redux';
+import { getFilteredContacts,} from 'redux/contacts/contacts-selectors';
 
-import { Button, TextField } from '@mui/material';
 
-import { selectContacts } from 'redux/selectors';
-import { addContact } from '../../redux/contacts/contactsOperations';
-import s from './ContactForm.module.css';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
-export const ContactForm = memo(() => {
+
+
+export default function ContactForm() {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const contacts = useSelector(getFilteredContacts);
+
+
   const dispatch = useDispatch();
-  const contacts = useSelector(selectContacts);
 
-  const [userInfo, setUserInfo] = useState({ name: '', number: '' });
-
-  const handleChange = event => {
-    const { name, value } = event.target;
-    setUserInfo(prevState => ({ ...prevState, [name]: value }));
+  const handleName = e => {
+    setName(e.currentTarget.value);
   };
 
-  const resetForm = () => {
-    setUserInfo({ name: '', number: '' });
-  };
-
-  const handleContactFormSubmit = event => {
-    event.preventDefault();
-
-    const contactExists = contacts.find(
-      contact => contact.name.toUpperCase() === userInfo.name.toUpperCase()
-    );
-
-    if (contactExists) {
-      alert(`${userInfo.name} is already in contacts`);
-    } else {
-      dispatch(addContact(userInfo));
-      resetForm();
+  const handleNumber = event => {
+    const regex = /^[0-9+]+$/;
+    if (event.target.value === '' || regex.test(event.target.value)) {
+      setNumber(event.currentTarget.value);
     }
+    
   };
 
-  return (
-    <form className={s.form} onSubmit={handleContactFormSubmit}>
-      <TextField
-        id="standard-basic"
-        label="Name"
-        variant="standard"
-        value={userInfo.name}
-        onChange={handleChange}
-        name="name"
-        required
-      />
-      <TextField
-        id="standard-basic"
-        label="Number"
-        variant="standard"
-        value={userInfo.number}
-        onChange={handleChange}
-        name="number"
-        required
-      />
+  const handleSubmit = e => {
+    e.preventDefault();
 
-      <Button variant="outlined" type="submit">
-        Add contact
+    const isContactExist = contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    if (isContactExist) {
+      alert(`User with name ${name} is already in contacts`);
+      return;
+    }
+
+    dispatch(fetchAddContacts({ name, number }));
+
+    setName('');
+    setNumber('');
+  };
+  return (
+    <form onSubmit={handleSubmit} className={styled.form}>
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="name"
+        label="Ім'я"
+        name="name"
+        autoComplete="name"
+        autoFocus
+        value={name}
+        onChange={handleName}
+        inputProps={{ maxLength: 15}}
+      />
+      <TextField
+  margin="normal"
+  required
+  fullWidth
+  id="number"
+  label="Номер телефону"
+  name="number"
+  type="text"
+  autoComplete="number"
+  value={number}
+  onChange={handleNumber}
+  inputProps={{ maxLength: 10 }}
+/>
+      <Button type="submit" variant="contained">
+        Зберегти
       </Button>
     </form>
   );
-});
+}
