@@ -1,0 +1,22 @@
+.button {
+  background: none;
+  border: 1px solid rgb(120, 120, 120);
+  border-radius: 5px;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.textName {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.textPhone {
+  font-size: 18px;
+  text-decoration: underline;
+  color: rgb(93, 94, 95);
+}
